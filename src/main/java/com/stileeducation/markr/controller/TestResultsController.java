@@ -20,8 +20,8 @@ public class TestResultsController {
     this.testResultsService = testResultsService;
   }
 
-  // TODO - update to consume text/xml+markr, consider return value
-  @PostMapping(value = IMPORT_ENDPOINT, consumes = "application/xml", produces = "application/json")
+  // TODO consider return value
+  @PostMapping(value = IMPORT_ENDPOINT, consumes = "text/xml+markr", produces = "application/json")
   public ResponseEntity<Void> handleXmlRequest(@RequestBody MCQTestResultsDTO testResults) {
     testResultsService.importTestResults(testResults);
     return new ResponseEntity<>(HttpStatus.NO_CONTENT);
