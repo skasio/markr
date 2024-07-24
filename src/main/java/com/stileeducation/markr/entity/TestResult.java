@@ -8,6 +8,16 @@ import java.util.Objects;
 @Table(name = "test_results")
 public class TestResult {
 
+  public TestResult() {
+  }
+
+  public TestResult(Long id, Student student, Test test, Integer marksAwarded) {
+    this.id = id;
+    this.student = student;
+    this.test = test;
+    this.marksAwarded = marksAwarded;
+  }
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

@@ -7,16 +7,18 @@ import com.stileeducation.markr.entity.TestResult;
 import com.stileeducation.markr.repository.StudentRepository;
 import com.stileeducation.markr.repository.TestRepository;
 import com.stileeducation.markr.repository.TestResultRepository;
+import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
+import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class TestResultsService {
 
+  public static final boolean IS_BIAS_CORRECTED = false;
   @Autowired
   private TestResultRepository testResultRepository;
 
@@ -78,68 +80,64 @@ public class TestResultsService {
         .orElse(0.0);
   }
 
-  public double calculateStandardDeviationOfTestResults(List<TestResult> results, double mean) {
+  public double calculateStandardDeviationOfTestResults(List<TestResult> results) {
     if (results.isEmpty()) {
-      return 0.0; // or throw an exception if no results are found
-    }
-
-    // Calculate the variance
-    double variance = results.stream()
-        .mapToDouble(result -> Math.pow(result.getMarksAwarded() - mean, 2))
-        .average()
-        .orElse(0.0);
-
-    // Return the standard deviation
-    return Math.sqrt(variance);
-  }
-
-  public double calculatePercentile(List<Integer> sortedMarks, double percentile) {
-    if (sortedMarks.isEmpty()) {
       return 0.0;
     }
-    int index = (int) Math.floor(percentile / 100.0 * sortedMarks.size()) - 1;
-    return sortedMarks.get(Math.min(index, sortedMarks.size() - 1));
+    double[] marks =
+        results.stream()
+            .mapToDouble(TestResult::getMarksAwarded)
+            .toArray();
+
+    StandardDeviation standardDeviation = new StandardDeviation(IS_BIAS_CORRECTED);
+    return standardDeviation.evaluate(marks);
   }
 
-  public List<Integer> getSortedMarks(List<TestResult> testResults) {
-    return testResults.stream()
-        .map(TestResult::getMarksAwarded)
-        .sorted()
-        .collect(Collectors.toList());
+  public double calculate25thPercentile(List<TestResult> results) {
+    if (results.isEmpty()) {
+      return 0.0;
+    }
+    double[] marks =
+        results.stream()
+            .mapToDouble(TestResult::getMarksAwarded)
+            .toArray();
+    return new Percentile().evaluate(marks, 25.0);
   }
 
-  public double calculate25thPercentile(List<Integer> sortedMarks) {
-    return calculatePercentile(sortedMarks, 25.0);
+  public double calculate50thPercentile(List<TestResult> results) {
+    if (results.isEmpty()) {
+      return 0.0;
+    }
+    double[] marks =
+        results.stream()
+            .mapToDouble(TestResult::getMarksAwarded)
+            .toArray();
+    return new Percentile().evaluate(marks, 50.0);
   }
 
-  public double calculate50thPercentile(List<Integer> sortedMarks) {
-    return calculatePercentile(sortedMarks, 50.0);
-  }
-
-  public double calculate75thPercentile(List<Integer> sortedMarks) {
-    return calculatePercentile(sortedMarks, 75.0);
+  public double calculate75thPercentile(List<TestResult> results) {
+    if (results.isEmpty()) {
+      return 0.0;
+    }
+    double[] marks =
+        results.stream()
+            .mapToDouble(TestResult::getMarksAwarded)
+            .toArray();
+    return new Percentile().evaluate(marks, 75.0);
   }
 
   public AggregatedTestResultsDTO aggregateTestResults(String testId) {
     List<TestResult> testResults = findAllByTestId(testId);
-    List<Integer> sortedMarks = getSortedMarks(testResults);
 
     AggregatedTestResultsDTO results = new AggregatedTestResultsDTO();
 
     results.setMean(calculateMeanOfTestResults(testResults));
-
-    results.setStddev(calculateStandardDeviationOfTestResults(testResults, results.getMean()));
-
+    results.setStddev(calculateStandardDeviationOfTestResults(testResults));
     results.setMin(calculateMinOfTestResults(testResults));
-
     results.setMax(calculateMaxOfTestResults(testResults));
-
-    results.setP25(calculate25thPercentile(sortedMarks));
-
-    results.setP50(calculate50thPercentile(sortedMarks));
-
-    results.setP75(calculate75thPercentile(sortedMarks));
-
+    results.setP25(calculate25thPercentile(testResults));
+    results.setP50(calculate50thPercentile(testResults));
+    results.setP75(calculate75thPercentile(testResults));
     results.setCount(testResults.size());
 
     return results;
