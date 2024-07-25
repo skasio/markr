@@ -20,70 +20,75 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/")
 public class TestResultsController {
 
-  public static final String IMPORT_ENDPOINT = "/import";
-  public static final String AGGREGATE_ENDPOINT = "/results/{test-id}/aggregate";
+    public static final String IMPORT_ENDPOINT = "/import";
+    public static final String AGGREGATE_ENDPOINT = "/results/{test-id}/aggregate";
 
-  @Autowired
-  private StudentService studentService;
+    @Autowired
+    private StudentService studentService;
 
-  @Autowired
-  private TestService testService;
+    @Autowired
+    private TestService testService;
 
-  @Autowired
-  private TestResultsService testResultsService;
+    @Autowired
+    private TestResultsService testResultsService;
 
-  @Autowired
-  private TestRepository testRepository;
+    @Autowired
+    private TestRepository testRepository;
 
-  @Autowired
-  private TestResultRepository testResultRepository;
+    @Autowired
+    private TestResultRepository testResultRepository;
 
-  public TestResultsController(TestResultsService testResultsService) {
-    this.testResultsService = testResultsService;
-  }
-
-  // TODO consider return value
-  @PostMapping(value = IMPORT_ENDPOINT, consumes = "text/xml+markr", produces = "application/json")
-  public ResponseEntity<Void> handleXmlRequest(@RequestBody MCQTestResultsDTO testResults) {
-
-    for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
-      Student student = studentService
-          .findOrCreateStudent(
-              mcqTestResult.getFirstName(),
-              mcqTestResult.getLastName(),
-              mcqTestResult.getStudentNumber());
-
-      Test test = testService
-          .findOrCreateTest(
-              mcqTestResult.getTestId(),
-              mcqTestResult.getSummaryMarks().getAvailable());
-
-      if (test.getMarksAvailable() < mcqTestResult.getSummaryMarks().getAvailable()) {
-        test.setMarksAvailable(mcqTestResult.getSummaryMarks().getAvailable());
-        testRepository.save(test);
-      }
-
-      // Some edge cases to consider
-      // obtained is higher than available (assumption?)
-
-      TestResult testResult = testResultsService
-          .findOrCreateTestResult(
-              student.getId(),
-              test.getId(),
-              mcqTestResult.getSummaryMarks().getObtained());
-
-      if (testResult.getMarksAwarded() < mcqTestResult.getSummaryMarks().getObtained()) {
-        testResult.setMarksAwarded(mcqTestResult.getSummaryMarks().getObtained());
-        testResultRepository.save(testResult);
-      }
+    public TestResultsController(TestResultsService testResultsService) {
+        this.testResultsService = testResultsService;
     }
 
-    return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-  }
+    // TODO consider return value
+    @PostMapping(
+            value = IMPORT_ENDPOINT,
+            consumes = "text/xml+markr",
+            produces = "application/json")
+    public ResponseEntity<Void> handleXmlRequest(@RequestBody MCQTestResultsDTO testResults) {
 
-  @GetMapping(value = AGGREGATE_ENDPOINT, produces = "application/json")
-  public AggregatedTestResultsDTO getAggregatedResults(@PathVariable("test-id") String testId) {
-    return testResultsService.aggregateTestResults(testId);
-  }
+        for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
+            Student student = studentService
+                    .findOrCreateStudent(
+                            mcqTestResult.getFirstName(),
+                            mcqTestResult.getLastName(),
+                            mcqTestResult.getStudentNumber());
+
+            Test test = testService
+                    .findOrCreateTest(
+                            mcqTestResult.getTestId(),
+                            mcqTestResult.getSummaryMarks().getAvailable());
+
+            if (test.getMarksAvailable() < mcqTestResult.getSummaryMarks().getAvailable()) {
+                test.setMarksAvailable(mcqTestResult.getSummaryMarks().getAvailable());
+                testRepository.save(test);
+            }
+
+            // Some edge cases to consider
+            // obtained is higher than available (assumption?)
+
+            TestResult testResult = testResultsService
+                    .findOrCreateTestResult(
+                            student.getId(),
+                            test.getId(),
+                            mcqTestResult.getSummaryMarks().getObtained());
+
+            if (testResult.getMarksAwarded() < mcqTestResult.getSummaryMarks().getObtained()) {
+                testResult.setMarksAwarded(mcqTestResult.getSummaryMarks().getObtained());
+                testResultRepository.save(testResult);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+    }
+
+    @GetMapping(
+            value = AGGREGATE_ENDPOINT,
+            produces = "application/json")
+    public AggregatedTestResultsDTO getAggregatedResults(@PathVariable("test-id") String testId) {
+        return testResultsService.aggregateTestResults(testId);
+    }
 
 }
