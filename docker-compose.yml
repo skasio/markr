@@ -1,0 +1,27 @@
+services:
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      POSTGRES_USER: markr_prod
+      POSTGRES_PASSWORD: CpfzDA3nR3jH9Ky4
+      POSTGRES_DB: markr
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+
+  markr_service:
+    build: .
+    container_name: markr_service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - postgres
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/markr
+      SPRING_DATASOURCE_USERNAME: markr_prod
+      SPRING_DATASOURCE_PASSWORD: CpfzDA3nR3jH9Ky4
+
+volumes:
+  postgres_data:
