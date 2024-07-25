@@ -10,7 +10,6 @@ import com.stileeducation.markr.entity.TestResult;
 import com.stileeducation.markr.repository.TestResultRepository;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,14 +20,17 @@ public class TestResultsService {
 
   public static final boolean IS_BIAS_CORRECTED = false;
 
-  @Autowired
-  private TestResultRepository testResultRepository;
+  private final TestResultRepository testResultRepository;
 
-  @Autowired
-  private StudentService studentService;
+  private final StudentService studentService;
 
-  @Autowired
-  private TestService testService;
+  private final TestService testService;
+
+  public TestResultsService(TestResultRepository testResultRepository, StudentService studentService, TestService testService) {
+    this.testResultRepository = testResultRepository;
+    this.studentService = studentService;
+    this.testService = testService;
+  }
 
   public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
     Optional<TestResult> optionalTestResult = testResultRepository.findByStudentAndTest(student, test);
