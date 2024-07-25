@@ -1,13 +1,13 @@
-# Stage 1: Build the JAR file
+# Stage 1: BUILD
 FROM maven:3.8.5-openjdk-17 AS build
 WORKDIR /app
 COPY mvnw pom.xml ./
 COPY .mvn .mvn
 COPY src src
 RUN chmod +x mvnw
-RUN ./mvnw clean package -Dmaven.test.skip=true
+RUN ./mvnw clean package -q -Dmaven.test.skip=true
 
-# Stage 2: Run the JAR file
+# Stage 2: RUN
 FROM openjdk:17-alpine
 RUN addgroup -S spring && adduser -S spring -G spring
 USER spring:spring

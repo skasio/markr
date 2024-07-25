@@ -1,0 +1,15 @@
+# Stage 1: BUILD
+FROM maven:3.8.5-openjdk-17 AS build
+WORKDIR /app
+COPY mvnw pom.xml ./
+COPY .mvn .mvn
+COPY src src
+RUN chmod +x mvnw
+RUN ./mvnw clean package -q -Dmaven.test.skip=true
+
+# Stage 2: TEST
+FROM maven:3.8.5-openjdk-17 AS test
+WORKDIR /app
+COPY --from=build /app /app
+RUN chmod +x mvnw
+CMD ["./mvnw", "test", "-P", "test", "-q"]
