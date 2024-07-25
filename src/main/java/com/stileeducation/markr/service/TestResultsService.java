@@ -35,10 +35,9 @@ public class TestResultsService {
   }
 
   private static double[] calculatePercentages(List<TestResult> results, double totalMarksAvailable) {
-    double[] percentages = results.stream()
+    return results.stream()
         .mapToDouble(result -> (double) result.getMarksAwarded() / totalMarksAvailable * 100)
         .toArray();
-    return percentages;
   }
 
   public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
