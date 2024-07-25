@@ -41,7 +41,8 @@ public class SummaryMarksDTO {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
     SummaryMarksDTO that = (SummaryMarksDTO) o;
-    return available == that.available && obtained == that.obtained;
+    return Objects.equals(available, that.available)
+        && Objects.equals(obtained, that.obtained);
   }
 
   @Override
