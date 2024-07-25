@@ -1,6 +1,7 @@
 package com.stileeducation.markr.dto;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
@@ -11,6 +12,7 @@ import java.util.Objects;
 public class MCQTestResultsDTO {
 
   @Valid
+  @NotNull(message = "mcq-test-result is mandatory")
   private List<MCQTestResultDTO> mcqTestResults;
 
   @XmlElement(name = "mcq-test-result")

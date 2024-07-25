@@ -12,23 +12,23 @@ import java.util.Objects;
 @XmlRootElement(name = "mcq-test-result")
 public class MCQTestResultDTO {
 
-  @NotBlank
+  @NotBlank(message = "scanned-on is mandatory")
   private String scannedOn;
 
-  @NotBlank(message = "First name is mandatory")
+  @NotBlank(message = "first-name is mandatory")
   private String firstName;
 
-  @NotBlank(message = "Last name is mandatory")
+  @NotBlank(message = "last-name is mandatory")
   private String lastName;
 
-  @NotBlank(message = "Last name is mandatory")
+  @NotBlank(message = "student-number is mandatory")
   private String studentNumber;
 
-  @NotBlank(message = "Test id is mandatory")
+  @NotBlank(message = "test-id is mandatory")
   private String testId;
 
   @Valid
-  @NotNull
+  @NotNull(message = "summary-marks is mandatory")
   private SummaryMarksDTO summaryMarks;
 
   @XmlAttribute(name = "scanned-on")

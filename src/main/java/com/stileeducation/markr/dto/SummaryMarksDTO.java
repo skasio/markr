@@ -10,12 +10,12 @@ import java.util.Objects;
 @XmlRootElement(name = "summary-marks")
 public class SummaryMarksDTO {
 
-  @NotNull(message = "Available marks must not be null")
-  @Min(value = 0, message = "Available marks must be non-negative")
+  @NotNull(message = "summary-marks available must not be null")
+  @Min(value = 0, message = "summary-marks available must be non-negative")
   private Integer available;
 
-  @NotNull(message = "Obtained marks must not be null")
-  @Min(value = 0, message = "Obtained marks must be non-negative")
+  @NotNull(message = "summary-marks obtained must not be null")
+  @Min(value = 0, message = "summary-marks obtained must be non-negative")
   private Integer obtained;
 
   @XmlAttribute(name = "available")
