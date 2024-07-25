@@ -1,3 +1,5 @@
+name: skasio_markr
+
 services:
   postgres:
     image: postgres:latest
@@ -11,11 +13,11 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
-  markr:
+  service:
     build:
       context: .
       dockerfile: Dockerfile
-    container_name: skasio_markr
+    container_name: markr-service
     ports:
       - "8080:8080"
     depends_on:
@@ -25,11 +27,11 @@ services:
       SPRING_DATASOURCE_USERNAME: markr_prod
       SPRING_DATASOURCE_PASSWORD: CpfzDA3nR3jH9Ky4
 
-  markr_tests:
+  tests:
     build:
       context: .
       dockerfile: Dockerfile.test
-    container_name: skasio_markr_tests
+    container_name: markr-tests
     environment:
       SPRING_DATASOURCE_URL: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
       SPRING_DATASOURCE_USERNAME: markr_test
@@ -42,3 +44,4 @@ services:
 
 volumes:
   postgres_data:
+    name: markr_postgres_data

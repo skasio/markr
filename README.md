@@ -4,13 +4,12 @@
 
 ## Running the Project
 
-This project uses Docker for building, testing, and running the application. Below are the instructions to incorporate
-this project into your build system using Docker.
+This project uses Docker for containerization.
 
-### Prerequisites
+### Docker CLI Version
 
-- Docker (version 20.10 or later)
-- Docker Compose (version 1.29 or later)
+The project uses the latest version of the Docker CLI (version 27.1), which includes the integrated `docker compose`
+command for managing multi-container Docker applications.
 
 ### Build
 
@@ -27,7 +26,7 @@ This command will build the application image using the Dockerfile defined in th
 To run the tests using Docker, use the following command:
 
 ```shell
-docker compose run --rm markr_tests
+docker compose run --rm tests
 ```
 
 This command will build the Docker image (if not already built), start a container for testing, and run the tests. The
@@ -38,7 +37,7 @@ This command will build the Docker image (if not already built), start a contain
 To run the application, use the following command:
 
 ```shell
-docker compose up postgres markr
+docker compose up postgres service
 ```
 
 This command will start the application and its dependencies (like PostgreSQL) as defined in the docker-compose.yml
