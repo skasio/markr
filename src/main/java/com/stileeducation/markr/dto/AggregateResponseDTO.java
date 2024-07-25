@@ -7,14 +7,14 @@ import java.util.Objects;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class AggregateResponseDTO {
 
-  private double mean;
-  private double stddev;
-  private double min;
-  private double max;
-  private double p25;
-  private double p50;
-  private double p75;
-  private int count;
+  private double mean = 0.0;
+  private double stddev = 0.0;
+  private double min = 0.0;
+  private double max = 0.0;
+  private double p25 = 0.0;
+  private double p50 = 0.0;
+  private double p75 = 0.0;
+  private int count = 0;
 
   // Getters and Setters
   public double getMean() {

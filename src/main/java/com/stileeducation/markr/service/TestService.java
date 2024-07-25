@@ -16,6 +16,10 @@ public class TestService {
     this.testRepository = testRepository;
   }
 
+  public Optional<Test> findTest(String testId) {
+    return testRepository.findByTestId(testId);
+  }
+
   public Test findOrCreateTest(String testId, Integer marksAvailable) {
     Optional<Test> optionalTest = testRepository.findByTestId(testId);
     if (optionalTest.isPresent()) {

@@ -132,43 +132,43 @@ class TestResultsServiceTest {
 
   @Test
   void calculateMeanOfTestResults() {
-    double mean = testResultsService.calculateMeanOfTestResults(test1Results);
+    double mean = testResultsService.calculateMeanOfTestResults(test1, test1Results);
     assertEquals(45.0, mean, 0.01);
   }
 
   @Test
   void calculateMinOfTestResults() {
-    double min = testResultsService.calculateMinOfTestResults(test1Results);
+    double min = testResultsService.calculateMinOfTestResults(test1, test1Results);
     assertEquals(10.0, min, 0.01);
   }
 
   @Test
   void calculateMaxOfTestResults() {
-    double max = testResultsService.calculateMaxOfTestResults(test1Results);
+    double max = testResultsService.calculateMaxOfTestResults(test1, test1Results);
     assertEquals(80.0, max, 0.01);
   }
 
   @Test
   void calculateStandardDeviationOfTestResults() {
-    double standardDeviationOfTestResults = testResultsService.calculateStandardDeviationOfTestResults(test1Results);
+    double standardDeviationOfTestResults = testResultsService.calculateStandardDeviationOfTestResults(test1, test1Results);
     assertEquals(25, standardDeviationOfTestResults, 0.01);
   }
 
   @Test
   void calculate25thPercentile() {
-    double percentile = testResultsService.calculate25thPercentile(test1Results);
+    double percentile = testResultsService.calculate25thPercentile(test1, test1Results);
     assertEquals(17.5, percentile, 0.01);
   }
 
   @Test
   void calculate50thPercentile() {
-    double percentile = testResultsService.calculate50thPercentile(test1Results);
+    double percentile = testResultsService.calculate50thPercentile(test1, test1Results);
     assertEquals(45, percentile, 0.01);
   }
 
   @Test
   void calculate75thPercentile() {
-    double percentile = testResultsService.calculate75thPercentile(test1Results);
+    double percentile = testResultsService.calculate75thPercentile(test1, test1Results);
     assertEquals(72.5, percentile, 0.01);
   }
 

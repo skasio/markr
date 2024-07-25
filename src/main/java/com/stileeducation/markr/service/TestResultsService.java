@@ -12,8 +12,10 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
+import java.util.OptionalDouble;
 
 @Service
 public class TestResultsService {
@@ -30,6 +32,13 @@ public class TestResultsService {
     this.testResultRepository = testResultRepository;
     this.studentService = studentService;
     this.testService = testService;
+  }
+
+  private static double[] calculatePercentages(List<TestResult> results, double totalMarksAvailable) {
+    double[] percentages = results.stream()
+        .mapToDouble(result -> (double) result.getMarksAwarded() / totalMarksAvailable * 100)
+        .toArray();
+    return percentages;
   }
 
   public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
@@ -58,99 +67,107 @@ public class TestResultsService {
     return testResultRepository.findAllByTestId(testId);
   }
 
-  public double calculateMeanOfTestResults(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculateMeanOfTestResults(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    return results.stream()
-        .mapToInt(TestResult::getMarksAwarded)
-        .average()
-        .orElse(0.0);
+
+    OptionalDouble meanPercentage = Arrays.stream(calculatePercentages(results, totalMarksAvailable)).average();
+
+    return meanPercentage.orElse(0.0);
   }
 
-  public double calculateMinOfTestResults(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculateMinOfTestResults(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    return results
-        .stream()
-        .mapToDouble(TestResult::getMarksAwarded)
-        .min()
-        .orElse(0.0);
+
+    OptionalDouble minPercentage = Arrays.stream(calculatePercentages(results, totalMarksAvailable)).min();
+
+    return minPercentage.orElse(0.0);
   }
 
-  public double calculateMaxOfTestResults(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculateMaxOfTestResults(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    return results
-        .stream()
-        .mapToDouble(TestResult::getMarksAwarded)
-        .max()
-        .orElse(0.0);
+
+    OptionalDouble maxPercentage = Arrays.stream(calculatePercentages(results, totalMarksAvailable)).max();
+
+    return maxPercentage.orElse(0.0);
   }
 
-  public double calculateStandardDeviationOfTestResults(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculateStandardDeviationOfTestResults(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    double[] marks =
-        results.stream()
-            .mapToDouble(TestResult::getMarksAwarded)
-            .toArray();
 
     StandardDeviation standardDeviation = new StandardDeviation(IS_BIAS_CORRECTED);
-    return standardDeviation.evaluate(marks);
+    return standardDeviation.evaluate(calculatePercentages(results, totalMarksAvailable));
   }
 
-  public double calculate25thPercentile(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculate25thPercentile(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    double[] marks =
-        results.stream()
-            .mapToDouble(TestResult::getMarksAwarded)
-            .toArray();
-    return new Percentile().evaluate(marks, 25.0);
+
+    return new Percentile().evaluate(calculatePercentages(results, totalMarksAvailable), 25.0);
   }
 
-  public double calculate50thPercentile(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculate50thPercentile(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    double[] marks =
-        results.stream()
-            .mapToDouble(TestResult::getMarksAwarded)
-            .toArray();
-    return new Percentile().evaluate(marks, 50.0);
+
+    return new Percentile().evaluate(calculatePercentages(results, totalMarksAvailable), 50.0);
   }
 
-  public double calculate75thPercentile(List<TestResult> results) {
-    if (results.isEmpty()) {
+  public double calculate75thPercentile(Test test, List<TestResult> results) {
+    double totalMarksAvailable = test.getMarksAvailable();
+
+    if (totalMarksAvailable <= 0) {
       return 0.0;
     }
-    double[] marks =
-        results.stream()
-            .mapToDouble(TestResult::getMarksAwarded)
-            .toArray();
-    return new Percentile().evaluate(marks, 75.0);
+
+    double[] percentages = calculatePercentages(results, totalMarksAvailable);
+
+    return new Percentile().evaluate(percentages, 75.0);
   }
 
   public AggregateResponseDTO aggregateTestResults(String testId) {
-    List<TestResult> testResults = findAllByTestId(testId);
+    AggregateResponseDTO aggregateResponseDTO = new AggregateResponseDTO();
 
-    AggregateResponseDTO results = new AggregateResponseDTO();
+    testService.findTest(testId).ifPresent(test -> {
+      List<TestResult> testResults = findAllByTestId(testId);
+      if (!testResults.isEmpty()) {
+        populateAggregateResponse(aggregateResponseDTO, test, testResults);
+      }
+    });
 
-    results.setMean(calculateMeanOfTestResults(testResults));
-    results.setStddev(calculateStandardDeviationOfTestResults(testResults));
-    results.setMin(calculateMinOfTestResults(testResults));
-    results.setMax(calculateMaxOfTestResults(testResults));
-    results.setP25(calculate25thPercentile(testResults));
-    results.setP50(calculate50thPercentile(testResults));
-    results.setP75(calculate75thPercentile(testResults));
-    results.setCount(testResults.size());
+    return aggregateResponseDTO;
+  }
 
-    return results;
+  private void populateAggregateResponse(AggregateResponseDTO dto, Test test, List<TestResult> results) {
+    dto.setMean(calculateMeanOfTestResults(test, results));
+    dto.setStddev(calculateStandardDeviationOfTestResults(test, results));
+    dto.setMin(calculateMinOfTestResults(test, results));
+    dto.setMax(calculateMaxOfTestResults(test, results));
+    dto.setP25(calculate25thPercentile(test, results));
+    dto.setP50(calculate50thPercentile(test, results));
+    dto.setP75(calculate75thPercentile(test, results));
+    dto.setCount(results.size());
   }
 
   public ImportResponseDTO processTestResults(MCQTestResultsDTO testResults) {
@@ -159,49 +176,52 @@ public class TestResultsService {
 
     for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
       try {
-
-        Student student = studentService
-            .findOrCreateStudent(
-                mcqTestResult.getFirstName(),
-                mcqTestResult.getLastName(),
-                mcqTestResult.getStudentNumber());
-
-        if (student.isCreated()) {
-          importData.incrementStudentsCreated();
-        }
-        if (student.isUpdated()) {
-          importData.incrementStudentsUpdated();
-        }
-
-        Test test = testService
-            .findOrCreateTest(
-                mcqTestResult.getTestId(),
-                mcqTestResult.getSummaryMarks().getAvailable());
-
-        if (test.isCreated()) {
-          importData.incrementTestsCreated();
-        }
-        if (test.isUpdated()) {
-          importData.incrementTestsUpdated();
-        }
-
-        TestResult testResult =
-            findOrCreateTestResult(
-                student,
-                test,
-                mcqTestResult.getSummaryMarks().getObtained());
-
-        if (testResult.isCreated()) {
-          importData.incrementTestResultsCreated();
-        }
-        if (testResult.isUpdated()) {
-          importData.incrementTestResultsUpdated();
-        }
+        processTestResult(mcqTestResult, importData);
       } catch (Exception e) {
         isValid = false;
       }
     }
 
+    return createImportResponse(importData, isValid);
+  }
+
+  private void processTestResult(MCQTestResultDTO mcqTestResult, ImportResponseDTO.ImportData importData) {
+    Student student =
+        studentService
+            .findOrCreateStudent(
+                mcqTestResult.getFirstName(),
+                mcqTestResult.getLastName(),
+                mcqTestResult.getStudentNumber());
+
+    incrementIfTrue(student.isCreated(), importData::incrementTestResultsCreated);
+    incrementIfTrue(student.isUpdated(), importData::incrementTestResultsUpdated);
+
+    Test test =
+        testService
+            .findOrCreateTest(
+                mcqTestResult.getTestId(),
+                mcqTestResult.getSummaryMarks().getAvailable());
+
+    incrementIfTrue(test.isCreated(), importData::incrementTestResultsCreated);
+    incrementIfTrue(test.isUpdated(), importData::incrementTestResultsUpdated);
+
+    TestResult testResult =
+        findOrCreateTestResult(
+            student,
+            test,
+            mcqTestResult.getSummaryMarks().getObtained());
+
+    incrementIfTrue(testResult.isCreated(), importData::incrementTestResultsCreated);
+    incrementIfTrue(testResult.isUpdated(), importData::incrementTestResultsUpdated);
+  }
+
+  private void incrementIfTrue(boolean condition, Runnable action) {
+    if (condition) {
+      action.run();
+    }
+  }
+
+  private ImportResponseDTO createImportResponse(ImportResponseDTO.ImportData importData, boolean isValid) {
     ImportResponseDTO response = new ImportResponseDTO();
     response.setData(importData);
 
@@ -215,4 +235,5 @@ public class TestResultsService {
 
     return response;
   }
+
 }
