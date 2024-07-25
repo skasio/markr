@@ -35,6 +35,9 @@ public class TestResultsController {
 
   @GetMapping(value = AGGREGATE_ENDPOINT, produces = "application/json")
   public AggregateResponseDTO getAggregatedResults(@PathVariable("test-id") String testId) {
+
+    // Should return 404 if test is not found.
+
     return testResultsService.aggregateTestResults(testId);
   }
 

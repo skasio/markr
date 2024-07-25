@@ -192,8 +192,8 @@ public class TestResultsService {
                 mcqTestResult.getLastName(),
                 mcqTestResult.getStudentNumber());
 
-    incrementIfTrue(student.isCreated(), importData::incrementTestResultsCreated);
-    incrementIfTrue(student.isUpdated(), importData::incrementTestResultsUpdated);
+    incrementIfTrue(student.isCreated(), importData::incrementStudentsCreated);
+    incrementIfTrue(student.isUpdated(), importData::incrementStudentsUpdated);
 
     Test test =
         testService
@@ -201,8 +201,8 @@ public class TestResultsService {
                 mcqTestResult.getTestId(),
                 mcqTestResult.getSummaryMarks().getAvailable());
 
-    incrementIfTrue(test.isCreated(), importData::incrementTestResultsCreated);
-    incrementIfTrue(test.isUpdated(), importData::incrementTestResultsUpdated);
+    incrementIfTrue(test.isCreated(), importData::incrementTestsCreated);
+    incrementIfTrue(test.isUpdated(), importData::incrementTestsUpdated);
 
     TestResult testResult =
         findOrCreateTestResult(
