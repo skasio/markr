@@ -1,5 +1,7 @@
 package com.stileeducation.markr.dto;
 
+import java.util.Objects;
+
 public class ImportResponseDTO {
 
   private String status;
@@ -28,6 +30,30 @@ public class ImportResponseDTO {
 
   public void setData(ImportData data) {
     this.data = data;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    ImportResponseDTO that = (ImportResponseDTO) o;
+    return Objects.equals(status, that.status) &&
+        Objects.equals(message, that.message) &&
+        Objects.equals(data, that.data);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(status, message, data);
+  }
+
+  @Override
+  public String toString() {
+    return "ImportResponseDTO{" +
+        "status='" + status + '\'' +
+        ", message='" + message + '\'' +
+        ", data=" + data +
+        '}';
   }
 
   public static class ImportData {
@@ -110,6 +136,36 @@ public class ImportResponseDTO {
 
     public void incrementTestResultsUpdated() {
       this.testResultsUpdated++;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      ImportData that = (ImportData) o;
+      return studentsCreated == that.studentsCreated &&
+          studentsUpdated == that.studentsUpdated &&
+          testsCreated == that.testsCreated &&
+          testsUpdated == that.testsUpdated &&
+          testResultsCreated == that.testResultsCreated &&
+          testResultsUpdated == that.testResultsUpdated;
+    }
+
+    @Override
+    public int hashCode() {
+      return Objects.hash(studentsCreated, studentsUpdated, testsCreated, testsUpdated, testResultsCreated, testResultsUpdated);
+    }
+
+    @Override
+    public String toString() {
+      return "ImportData{" +
+          "studentsCreated=" + studentsCreated +
+          ", studentsUpdated=" + studentsUpdated +
+          ", testsCreated=" + testsCreated +
+          ", testsUpdated=" + testsUpdated +
+          ", testResultsCreated=" + testResultsCreated +
+          ", testResultsUpdated=" + testResultsUpdated +
+          '}';
     }
   }
 }
