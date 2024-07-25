@@ -1,5 +1,8 @@
 package com.stileeducation.markr.dto;
 
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlElement;
 import jakarta.xml.bind.annotation.XmlRootElement;
@@ -9,11 +12,23 @@ import java.util.Objects;
 @XmlRootElement(name = "mcq-test-result")
 public class MCQTestResultDTO {
 
+  @NotBlank
   private String scannedOn;
+
+  @NotBlank(message = "First name is mandatory")
   private String firstName;
+
+  @NotBlank(message = "Last name is mandatory")
   private String lastName;
+
+  @NotBlank(message = "Last name is mandatory")
   private String studentNumber;
+
+  @NotBlank(message = "Test id is mandatory")
   private String testId;
+
+  @Valid
+  @NotNull
   private SummaryMarksDTO summaryMarks;
 
   @XmlAttribute(name = "scanned-on")

@@ -10,74 +10,100 @@ import java.util.Set;
 @Table(name = "tests")
 public class Test {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "test_id", nullable = false, unique = true)
-    private String testId;
+  @Column(name = "test_id", nullable = false, unique = true)
+  private String testId;
 
-    @Column(name = "marks_available", nullable = false)
-    private Integer marksAvailable;
+  @Column(name = "marks_available", nullable = false)
+  private Integer marksAvailable;
 
-    @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestResult> testResults = new HashSet<>();
+  @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<TestResult> testResults = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
+  @Transient
+  private boolean created = false;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @Transient
+  private boolean updated = false;
 
-    public String getTestId() {
-        return testId;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setTestId(String testId) {
-        this.testId = testId;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public Integer getMarksAvailable() {
-        return marksAvailable;
-    }
+  public String getTestId() {
+    return testId;
+  }
 
-    public void setMarksAvailable(Integer marksAvailable) {
-        this.marksAvailable = marksAvailable;
-    }
+  public void setTestId(String testId) {
+    this.testId = testId;
+  }
 
-    public Set<TestResult> getTestResults() {
-        return testResults;
-    }
+  public Integer getMarksAvailable() {
+    return marksAvailable;
+  }
 
-    public void setTestResults(Set<TestResult> testResults) {
-        this.testResults = testResults;
-    }
+  public void setMarksAvailable(Integer marksAvailable) {
+    this.marksAvailable = marksAvailable;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Test test = (Test) o;
-        return Objects.equals(id, test.id) &&
-                Objects.equals(testId, test.testId) &&
-                Objects.equals(marksAvailable, test.marksAvailable) &&
-                Objects.equals(testResults, test.testResults);
-    }
+  public Set<TestResult> getTestResults() {
+    return testResults;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, testId, marksAvailable, testResults);
-    }
+  public void setTestResults(Set<TestResult> testResults) {
+    this.testResults = testResults;
+  }
 
-    @Override
-    public String toString() {
-        return "Test{" +
-                "id=" + id +
-                ", testId='" + testId + '\'' +
-                ", marksAvailable=" + marksAvailable +
-                ", testResults=" + testResults +
-                '}';
-    }
+  public boolean isCreated() {
+    return created;
+  }
+
+  public void setCreated(boolean created) {
+    this.created = created;
+  }
+
+  public boolean isUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(boolean updated) {
+    this.updated = updated;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Test test = (Test) o;
+    return Objects.equals(id, test.id) &&
+        Objects.equals(testId, test.testId) &&
+        Objects.equals(marksAvailable, test.marksAvailable) &&
+        Objects.equals(testResults, test.testResults) &&
+        Objects.equals(created, test.created) &&
+        Objects.equals(updated, test.updated);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, testId, marksAvailable, testResults);
+  }
+
+  @Override
+  public String toString() {
+    return "Test{" +
+        "id=" + id +
+        ", testId='" + testId + '\'' +
+        ", marksAvailable=" + marksAvailable +
+        ", testResults=" + testResults +
+        ", created=" + created +
+        ", updated=" + updated +
+        '}';
+  }
 }

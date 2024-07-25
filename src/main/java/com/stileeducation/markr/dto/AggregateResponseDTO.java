@@ -5,7 +5,7 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.Objects;
 
 @JsonInclude(JsonInclude.Include.NON_NULL)
-public class AggregatedTestResultsDTO {
+public class AggregateResponseDTO {
 
   private double mean;
   private double stddev;
@@ -85,7 +85,7 @@ public class AggregatedTestResultsDTO {
   public boolean equals(Object o) {
     if (this == o) return true;
     if (o == null || getClass() != o.getClass()) return false;
-    AggregatedTestResultsDTO that = (AggregatedTestResultsDTO) o;
+    AggregateResponseDTO that = (AggregateResponseDTO) o;
     return Double.compare(mean, that.mean) == 0
         && Double.compare(stddev, that.stddev) == 0
         && Double.compare(min, that.min) == 0

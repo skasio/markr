@@ -10,87 +10,113 @@ import java.util.Set;
 @Table(name = "students")
 public class Student {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
+  @Column(name = "first_name", nullable = false)
+  private String firstName;
 
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
+  @Column(name = "last_name", nullable = false)
+  private String lastName;
 
-    @Column(name = "student_number", nullable = false, unique = true)
-    private String studentNumber;
+  @Column(name = "student_number", nullable = false, unique = true)
+  private String studentNumber;
 
-    @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<TestResult> testResults = new HashSet<>();
+  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
+  private Set<TestResult> testResults = new HashSet<>();
 
-    public Long getId() {
-        return id;
-    }
+  @Transient
+  private boolean created = false;
 
-    public void setId(Long id) {
-        this.id = id;
-    }
+  @Transient
+  private boolean updated = false;
 
-    public String getFirstName() {
-        return firstName;
-    }
+  public Long getId() {
+    return id;
+  }
 
-    public void setFirstName(String firstName) {
-        this.firstName = firstName;
-    }
+  public void setId(Long id) {
+    this.id = id;
+  }
 
-    public String getLastName() {
-        return lastName;
-    }
+  public String getFirstName() {
+    return firstName;
+  }
 
-    public void setLastName(String lastName) {
-        this.lastName = lastName;
-    }
+  public void setFirstName(String firstName) {
+    this.firstName = firstName;
+  }
 
-    public String getStudentNumber() {
-        return studentNumber;
-    }
+  public String getLastName() {
+    return lastName;
+  }
 
-    public void setStudentNumber(String studentNumber) {
-        this.studentNumber = studentNumber;
-    }
+  public void setLastName(String lastName) {
+    this.lastName = lastName;
+  }
 
-    public Set<TestResult> getTestResults() {
-        return testResults;
-    }
+  public String getStudentNumber() {
+    return studentNumber;
+  }
 
-    public void setTestResults(Set<TestResult> testResults) {
-        this.testResults = testResults;
-    }
+  public void setStudentNumber(String studentNumber) {
+    this.studentNumber = studentNumber;
+  }
 
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        Student student = (Student) o;
-        return Objects.equals(id, student.id) &&
-                Objects.equals(firstName, student.firstName) &&
-                Objects.equals(lastName, student.lastName) &&
-                Objects.equals(studentNumber, student.studentNumber) &&
-                Objects.equals(testResults, student.testResults);
-    }
+  public Set<TestResult> getTestResults() {
+    return testResults;
+  }
 
-    @Override
-    public int hashCode() {
-        return Objects.hash(id, firstName, lastName, studentNumber, testResults);
-    }
+  public void setTestResults(Set<TestResult> testResults) {
+    this.testResults = testResults;
+  }
 
-    @Override
-    public String toString() {
-        return "Student{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", studentNumber='" + studentNumber + '\'' +
-                ", testResults=" + testResults +
-                '}';
-    }
+  public boolean isCreated() {
+    return created;
+  }
+
+  public void setCreated(boolean created) {
+    this.created = created;
+  }
+
+  public boolean isUpdated() {
+    return updated;
+  }
+
+  public void setUpdated(boolean updated) {
+    this.updated = updated;
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Student student = (Student) o;
+    return Objects.equals(id, student.id) &&
+        Objects.equals(firstName, student.firstName) &&
+        Objects.equals(lastName, student.lastName) &&
+        Objects.equals(studentNumber, student.studentNumber) &&
+        Objects.equals(testResults, student.testResults) &&
+        Objects.equals(created, student.created) &&
+        Objects.equals(updated, student.updated);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(id, firstName, lastName, studentNumber, testResults);
+  }
+
+  @Override
+  public String toString() {
+    return "Student{" +
+        "id=" + id +
+        ", firstName='" + firstName + '\'' +
+        ", lastName='" + lastName + '\'' +
+        ", studentNumber='" + studentNumber + '\'' +
+        ", testResults=" + testResults +
+        ", created=" + created +
+        ", updated=" + updated +
+        '}';
+  }
 }

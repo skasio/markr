@@ -1,5 +1,7 @@
 package com.stileeducation.markr.dto;
 
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import jakarta.xml.bind.annotation.XmlAttribute;
 import jakarta.xml.bind.annotation.XmlRootElement;
 
@@ -7,8 +9,14 @@ import java.util.Objects;
 
 @XmlRootElement(name = "summary-marks")
 public class SummaryMarksDTO {
-  private int available;
-  private int obtained;
+
+  @NotNull(message = "Available marks must not be null")
+  @Min(value = 0, message = "Available marks must be non-negative")
+  private Integer available;
+
+  @NotNull(message = "Obtained marks must not be null")
+  @Min(value = 0, message = "Obtained marks must be non-negative")
+  private Integer obtained;
 
   @XmlAttribute(name = "available")
   public int getAvailable() {

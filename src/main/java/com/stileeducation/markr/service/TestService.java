@@ -16,13 +16,21 @@ public class TestService {
   public Test findOrCreateTest(String testId, Integer marksAvailable) {
     Optional<Test> optionalTest = testRepository.findByTestId(testId);
     if (optionalTest.isPresent()) {
-      return optionalTest.get();
+      Test test = optionalTest.get();
+      if (test.getMarksAvailable() < marksAvailable) {
+        test.setMarksAvailable(marksAvailable);
+        test.setUpdated(true);
+        testRepository.save(test);
+      } else {
+        test.setUpdated(false);
+      }
+      return test;
     } else {
       Test test = new Test();
       test.setTestId(testId);
       test.setMarksAvailable(marksAvailable);
+      test.setCreated(true);
       return testRepository.save(test);
     }
   }
-
 }

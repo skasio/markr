@@ -1,11 +1,12 @@
 package com.stileeducation.markr.service;
 
-import com.stileeducation.markr.dto.AggregatedTestResultsDTO;
+import com.stileeducation.markr.dto.AggregateResponseDTO;
+import com.stileeducation.markr.dto.ImportResponseDTO;
+import com.stileeducation.markr.dto.MCQTestResultDTO;
+import com.stileeducation.markr.dto.MCQTestResultsDTO;
 import com.stileeducation.markr.entity.Student;
 import com.stileeducation.markr.entity.Test;
 import com.stileeducation.markr.entity.TestResult;
-import com.stileeducation.markr.repository.StudentRepository;
-import com.stileeducation.markr.repository.TestRepository;
 import com.stileeducation.markr.repository.TestResultRepository;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
@@ -19,27 +20,34 @@ import java.util.Optional;
 public class TestResultsService {
 
   public static final boolean IS_BIAS_CORRECTED = false;
+
   @Autowired
   private TestResultRepository testResultRepository;
 
   @Autowired
-  private StudentRepository studentRepository;
+  private StudentService studentService;
 
   @Autowired
-  private TestRepository testRepository;
+  private TestService testService;
 
-  public TestResult findOrCreateTestResult(Long studentId, Long testId, Integer marksAwarded) {
-    Student student = studentRepository.findById(studentId).orElseThrow(() -> new RuntimeException("Student not found"));
-    Test test = testRepository.findById(testId).orElseThrow(() -> new RuntimeException("Test not found"));
-
+  public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
     Optional<TestResult> optionalTestResult = testResultRepository.findByStudentAndTest(student, test);
     if (optionalTestResult.isPresent()) {
-      return optionalTestResult.get();
+      TestResult testResult = optionalTestResult.get();
+      if (marksAwarded > testResult.getMarksAwarded()) {
+        testResult.setMarksAwarded(marksAwarded);
+        testResult.setUpdated(true);
+        testResultRepository.save(testResult);
+      } else {
+        testResult.setUpdated(false);
+      }
+      return testResult;
     } else {
       TestResult testResult = new TestResult();
       testResult.setStudent(student);
       testResult.setTest(test);
       testResult.setMarksAwarded(marksAwarded);
+      testResult.setCreated(true);
       return testResultRepository.save(testResult);
     }
   }
@@ -126,10 +134,10 @@ public class TestResultsService {
     return new Percentile().evaluate(marks, 75.0);
   }
 
-  public AggregatedTestResultsDTO aggregateTestResults(String testId) {
+  public AggregateResponseDTO aggregateTestResults(String testId) {
     List<TestResult> testResults = findAllByTestId(testId);
 
-    AggregatedTestResultsDTO results = new AggregatedTestResultsDTO();
+    AggregateResponseDTO results = new AggregateResponseDTO();
 
     results.setMean(calculateMeanOfTestResults(testResults));
     results.setStddev(calculateStandardDeviationOfTestResults(testResults));
@@ -143,4 +151,66 @@ public class TestResultsService {
     return results;
   }
 
+  public ImportResponseDTO processTestResults(MCQTestResultsDTO testResults) {
+    ImportResponseDTO.ImportData importData = new ImportResponseDTO.ImportData();
+    boolean isValid = true;
+
+    for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
+      try {
+
+        Student student = studentService
+            .findOrCreateStudent(
+                mcqTestResult.getFirstName(),
+                mcqTestResult.getLastName(),
+                mcqTestResult.getStudentNumber());
+
+        if (student.isCreated()) {
+          importData.incrementStudentsCreated();
+        }
+        if (student.isUpdated()) {
+          importData.incrementStudentsUpdated();
+        }
+
+        Test test = testService
+            .findOrCreateTest(
+                mcqTestResult.getTestId(),
+                mcqTestResult.getSummaryMarks().getAvailable());
+
+        if (test.isCreated()) {
+          importData.incrementTestsCreated();
+        }
+        if (test.isUpdated()) {
+          importData.incrementTestsUpdated();
+        }
+
+        TestResult testResult =
+            findOrCreateTestResult(
+                student,
+                test,
+                mcqTestResult.getSummaryMarks().getObtained());
+
+        if (testResult.isCreated()) {
+          importData.incrementTestResultsCreated();
+        }
+        if (testResult.isUpdated()) {
+          importData.incrementTestResultsUpdated();
+        }
+      } catch (Exception e) {
+        isValid = false;
+      }
+    }
+
+    ImportResponseDTO response = new ImportResponseDTO();
+    response.setData(importData);
+
+    if (isValid) {
+      response.setStatus("success");
+      response.setMessage("Import operation completed successfully.");
+    } else {
+      response.setStatus("failure");
+      response.setMessage("Data was invalid or processing failed.");
+    }
+
+    return response;
+  }
 }

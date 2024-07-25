@@ -22,6 +22,7 @@ public class StudentService {
       student.setFirstName(firstName);
       student.setLastName(lastName);
       student.setStudentNumber(studentNumber);
+      student.setCreated(true);
       return studentRepository.save(student);
     }
   }
