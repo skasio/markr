@@ -125,6 +125,7 @@ curl http://localhost:4567/results/1234/aggregate
 - Set up a multi-stage Docker Compose file to build, test, and run the application independently, supporting CI/CD pipelines.
 
 **Data Model**
+
 ![Markr Data Model](images/markr_data_model.png)
 
 ## Next Steps / Recommendations
