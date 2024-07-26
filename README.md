@@ -32,6 +32,7 @@ curl http://localhost:4567/results/1234/aggregate
 - Implemented the application using Spring Boot, leveraging my Java background and the framework’s ease of setup for microservices.
 - Created Java classes to represent the XML payloads
 - Used PostgreSQL for data storage
+- Used in-memory H2 database for integration testing
 - Designed entity models for Student, Test, and TestResult to map database tables and manage relationships.
 - Applied common Spring patterns:
     - Used JPA for ORM to interact with the PostgreSQL database.
