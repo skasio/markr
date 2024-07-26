@@ -40,6 +40,34 @@ public class TestResultsService {
         .toArray();
   }
 
+  public AggregateResponseDTO aggregateTestResults(String testId) {
+    AggregateResponseDTO aggregateResponseDTO = new AggregateResponseDTO();
+
+    testService.findTest(testId).ifPresent(test -> {
+      List<TestResult> testResults = findAllByTestId(testId);
+      if (!testResults.isEmpty()) {
+        populateAggregateResponse(aggregateResponseDTO, test, testResults);
+      }
+    });
+
+    return aggregateResponseDTO;
+  }
+
+  public ImportResponseDTO processTestResults(MCQTestResultsDTO testResults) {
+    ImportResponseDTO.ImportData importData = new ImportResponseDTO.ImportData();
+    boolean isValid = true;
+
+    for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
+      try {
+        processTestResult(mcqTestResult, importData);
+      } catch (Exception e) {
+        isValid = false;
+      }
+    }
+
+    return createImportResponse(importData, isValid);
+  }
+
   public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
     Optional<TestResult> optionalTestResult = testResultRepository.findByStudentAndTest(student, test);
     if (optionalTestResult.isPresent()) {
@@ -145,19 +173,6 @@ public class TestResultsService {
     return new Percentile().evaluate(percentages, 75.0);
   }
 
-  public AggregateResponseDTO aggregateTestResults(String testId) {
-    AggregateResponseDTO aggregateResponseDTO = new AggregateResponseDTO();
-
-    testService.findTest(testId).ifPresent(test -> {
-      List<TestResult> testResults = findAllByTestId(testId);
-      if (!testResults.isEmpty()) {
-        populateAggregateResponse(aggregateResponseDTO, test, testResults);
-      }
-    });
-
-    return aggregateResponseDTO;
-  }
-
   private void populateAggregateResponse(AggregateResponseDTO dto, Test test, List<TestResult> results) {
     dto.setMean(calculateMeanOfTestResults(test, results));
     dto.setStddev(calculateStandardDeviationOfTestResults(test, results));
@@ -167,21 +182,6 @@ public class TestResultsService {
     dto.setP50(calculate50thPercentile(test, results));
     dto.setP75(calculate75thPercentile(test, results));
     dto.setCount(results.size());
-  }
-
-  public ImportResponseDTO processTestResults(MCQTestResultsDTO testResults) {
-    ImportResponseDTO.ImportData importData = new ImportResponseDTO.ImportData();
-    boolean isValid = true;
-
-    for (MCQTestResultDTO mcqTestResult : testResults.getMcqTestResults()) {
-      try {
-        processTestResult(mcqTestResult, importData);
-      } catch (Exception e) {
-        isValid = false;
-      }
-    }
-
-    return createImportResponse(importData, isValid);
   }
 
   private void processTestResult(MCQTestResultDTO mcqTestResult, ImportResponseDTO.ImportData importData) {
