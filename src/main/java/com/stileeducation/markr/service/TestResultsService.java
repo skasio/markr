@@ -28,10 +28,6 @@ public class TestResultsService {
 
   private final TestResultRepository testResultRepository;
 
-  private final StudentRepository studentRepository;
-
-  private final TestRepository testRepository;
-
   private final StudentService studentService;
 
   private final TestService testService;
@@ -42,8 +38,6 @@ public class TestResultsService {
                             StudentService studentService,
                             TestService testService) {
     this.testResultRepository = testResultRepository;
-    this.studentRepository = studentRepository;
-    this.testRepository = testRepository;
     this.studentService = studentService;
     this.testService = testService;
   }

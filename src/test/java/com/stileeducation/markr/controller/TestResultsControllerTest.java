@@ -382,9 +382,6 @@ public class TestResultsControllerTest {
     headers.setContentType(XmlMarkrMessageConverter.MEDIA_TYPE);
     HttpEntity<String> entity = new HttpEntity<>(validPayload, headers);
 
-    // Initial Submit
-    restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
-
     // When
     ResponseEntity<ImportResponseDTO> response = restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
 
