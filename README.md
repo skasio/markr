@@ -1,6 +1,88 @@
 # Markr - Marking as a Service
 
-**Szymon Szukalski's Submission to the Stile Coding Challenge - July 2024**
+This repository contains Szymon Szukalski's submission to the Stile Coding Challenge.
+
+This document describes:
+1. How to run and test the project
+2. Assumptions
+3. Approach Taken
+4. Next Steps and Recommendations
+
+## Running the Project
+
+This project uses Docker for containerization.
+
+### Docker CLI Version
+
+The project uses the latest version of the Docker CLI (version 27.1), which includes the integrated `docker compose`  
+command for managing multi-container Docker applications.
+
+### Build
+
+To build the Docker image for the application, run the following command:
+
+```shell  
+docker compose build
+```  
+
+This command will build the application image using the Dockerfile defined in the project.
+
+### Test
+
+To run the tests using Docker, use the following command:
+
+```shell  
+docker compose run --rm tests
+```  
+
+This command will build the Docker image (if not already built), start a container for testing, and run the tests. The  
+--rm flag ensures that the test container is removed after the tests complete.
+
+### Run
+
+To run the application, use the following command:
+
+```shell  
+docker compose up postgres service
+```  
+
+This command will start the application and its dependencies (like PostgreSQL) as defined in the docker-compose.yml  
+file.
+
+### Testing from the command-line
+
+Once the application is up and running, you can run some command-line tests using `curl`.
+
+To import the sample results:
+
+```shell
+cd data
+curl -X POST http://localhost:8080/import -H "Content-Type: text/xml+markr"  --data-binary "@sample-results.xml"
+HTTP/1.1 200 
+Content-Type: application/json
+Transfer-Encoding: chunked
+Date: Fri, 26 Jul 2024 05:56:28 GMT
+
+{"status":"success","message":"Import completed successfully","data":{"studentsCreated":0,"studentsUpdated":0,"testsCreated":0,"testsUpdated":0,"testResultsCreated":0,"testResultsUpdated":0}}
+```
+To aggregate the results:
+
+```shell
+curl -i -X GET http://localhost:8080/results/9863/aggregate
+HTTP/1.1 404 
+Content-Length: 0
+Date: Fri, 26 Jul 2024 06:06:22 GMT
+```
+
+### Cleanup
+
+To stop the running containers and remove them along with associated volumes, use:
+
+```shell  
+docker compose down -v
+```  
+
+This command will stop and remove the containers and any associated volumes.
 
 ## Assumptions
 
@@ -71,54 +153,3 @@ curl http://localhost:4567/results/1234/aggregate
 - Use an ELT approach by storing the original XML payload in block storage before loading and transforming it.
 - Storing the original XML payload enables updating the transformation logic and reprocessing the original data with new logic if needed.
 - Leverage the event-driven architecture to facilitate replaying and correcting results if bugs are fixed in the transformation logic, allowing for data reprocessing and validation.
-
-## Running the Project
-
-This project uses Docker for containerization.
-
-### Docker CLI Version
-
-The project uses the latest version of the Docker CLI (version 27.1), which includes the integrated `docker compose`  
-command for managing multi-container Docker applications.
-
-### Build
-
-To build the Docker image for the application, run the following command:
-
-```shell  
-docker compose build
-```  
-
-This command will build the application image using the Dockerfile defined in the project.
-
-### Test
-
-To run the tests using Docker, use the following command:
-
-```shell  
-docker compose run --rm tests
-```  
-
-This command will build the Docker image (if not already built), start a container for testing, and run the tests. The  
---rm flag ensures that the test container is removed after the tests complete.
-
-### Run
-
-To run the application, use the following command:
-
-```shell  
-docker compose up postgres service
-```  
-
-This command will start the application and its dependencies (like PostgreSQL) as defined in the docker-compose.yml  
-file.
-
-### Cleanup
-
-To stop the running containers and remove them along with associated volumes, use:
-
-```shell  
-docker compose down -v
-```  
-
-This command will stop and remove the containers and any associated volumes.
