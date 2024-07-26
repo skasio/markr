@@ -2,9 +2,7 @@ package com.stileeducation.markr.entity;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "students")
@@ -22,9 +20,6 @@ public class Student {
 
   @Column(name = "student_number", nullable = false, unique = true)
   private String studentNumber;
-
-  @OneToMany(mappedBy = "student", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<TestResult> testResults = new HashSet<>();
 
   @Transient
   private boolean created = false;
@@ -64,14 +59,6 @@ public class Student {
     this.studentNumber = studentNumber;
   }
 
-  public Set<TestResult> getTestResults() {
-    return testResults;
-  }
-
-  public void setTestResults(Set<TestResult> testResults) {
-    this.testResults = testResults;
-  }
-
   public boolean isCreated() {
     return created;
   }
@@ -96,15 +83,12 @@ public class Student {
     return Objects.equals(id, student.id) &&
         Objects.equals(firstName, student.firstName) &&
         Objects.equals(lastName, student.lastName) &&
-        Objects.equals(studentNumber, student.studentNumber) &&
-        Objects.equals(testResults, student.testResults) &&
-        Objects.equals(created, student.created) &&
-        Objects.equals(updated, student.updated);
+        Objects.equals(studentNumber, student.studentNumber);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, firstName, lastName, studentNumber, testResults);
+    return Objects.hash(id, firstName, lastName, studentNumber);
   }
 
   @Override
@@ -114,7 +98,6 @@ public class Student {
         ", firstName='" + firstName + '\'' +
         ", lastName='" + lastName + '\'' +
         ", studentNumber='" + studentNumber + '\'' +
-        ", testResults=" + testResults +
         ", created=" + created +
         ", updated=" + updated +
         '}';

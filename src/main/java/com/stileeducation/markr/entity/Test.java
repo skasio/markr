@@ -2,9 +2,7 @@ package com.stileeducation.markr.entity;
 
 import jakarta.persistence.*;
 
-import java.util.HashSet;
 import java.util.Objects;
-import java.util.Set;
 
 @Entity
 @Table(name = "tests")
@@ -19,9 +17,6 @@ public class Test {
 
   @Column(name = "marks_available", nullable = false)
   private Integer marksAvailable;
-
-  @OneToMany(mappedBy = "test", cascade = CascadeType.ALL, orphanRemoval = true)
-  private Set<TestResult> testResults = new HashSet<>();
 
   @Transient
   private boolean created = false;
@@ -53,14 +48,6 @@ public class Test {
     this.marksAvailable = marksAvailable;
   }
 
-  public Set<TestResult> getTestResults() {
-    return testResults;
-  }
-
-  public void setTestResults(Set<TestResult> testResults) {
-    this.testResults = testResults;
-  }
-
   public boolean isCreated() {
     return created;
   }
@@ -84,15 +71,12 @@ public class Test {
     Test test = (Test) o;
     return Objects.equals(id, test.id) &&
         Objects.equals(testId, test.testId) &&
-        Objects.equals(marksAvailable, test.marksAvailable) &&
-        Objects.equals(testResults, test.testResults) &&
-        Objects.equals(created, test.created) &&
-        Objects.equals(updated, test.updated);
+        Objects.equals(marksAvailable, test.marksAvailable);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, testId, marksAvailable, testResults);
+    return Objects.hash(id, testId, marksAvailable);
   }
 
   @Override
@@ -101,7 +85,6 @@ public class Test {
         "id=" + id +
         ", testId='" + testId + '\'' +
         ", marksAvailable=" + marksAvailable +
-        ", testResults=" + testResults +
         ", created=" + created +
         ", updated=" + updated +
         '}';

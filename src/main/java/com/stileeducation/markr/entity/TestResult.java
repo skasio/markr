@@ -20,8 +20,8 @@ public class TestResult {
   @JoinColumn(name = "test_id", nullable = false)
   private Test test;
 
-  @Column(name = "marks_awarded", nullable = false)
-  private Integer marksAwarded;
+  @Column(name = "marks_obtained", nullable = false)
+  private Integer marksObtained;
 
   @Transient
   private boolean created = false;
@@ -32,11 +32,11 @@ public class TestResult {
   public TestResult() {
   }
 
-  public TestResult(Long id, Student student, Test test, Integer marksAwarded) {
+  public TestResult(Long id, Student student, Test test, Integer marksObtained) {
     this.id = id;
     this.student = student;
     this.test = test;
-    this.marksAwarded = marksAwarded;
+    this.marksObtained = marksObtained;
   }
 
   public Long getId() {
@@ -63,12 +63,12 @@ public class TestResult {
     this.test = test;
   }
 
-  public Integer getMarksAwarded() {
-    return marksAwarded;
+  public Integer getMarksObtained() {
+    return marksObtained;
   }
 
-  public void setMarksAwarded(Integer marksAwarded) {
-    this.marksAwarded = marksAwarded;
+  public void setMarksObtained(Integer marksObtained) {
+    this.marksObtained = marksObtained;
   }
 
   public boolean isCreated() {
@@ -95,14 +95,12 @@ public class TestResult {
     return Objects.equals(id, that.id) &&
         Objects.equals(student, that.student) &&
         Objects.equals(test, that.test) &&
-        Objects.equals(marksAwarded, that.marksAwarded) &&
-        Objects.equals(created, that.created) &&
-        Objects.equals(updated, that.updated);
+        Objects.equals(marksObtained, that.marksObtained);
   }
 
   @Override
   public int hashCode() {
-    return Objects.hash(id, student, test, marksAwarded);
+    return Objects.hash(id, student, test, marksObtained);
   }
 
   @Override
@@ -111,7 +109,7 @@ public class TestResult {
         "id=" + id +
         ", student=" + student +
         ", test=" + test +
-        ", marksAwarded=" + marksAwarded +
+        ", marksObtained=" + marksObtained +
         ", created=" + created +
         ", updated=" + updated +
         '}';

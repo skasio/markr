@@ -4,6 +4,8 @@ import com.stileeducation.markr.MarkrApplication;
 import com.stileeducation.markr.converter.XmlMarkrMessageConverter;
 import com.stileeducation.markr.dto.ImportResponseDTO;
 import com.stileeducation.markr.dto.MCQTestResultsDTO;
+import com.stileeducation.markr.repository.TestResultRepository;
+import com.stileeducation.markr.service.TestService;
 import jakarta.xml.bind.JAXBContext;
 import jakarta.xml.bind.JAXBException;
 import jakarta.xml.bind.Marshaller;
@@ -32,6 +34,11 @@ public class TestResultsControllerTest {
 
   @Autowired
   private TestRestTemplate restTemplate;
+
+  @Autowired
+  private TestResultRepository testResultRepository;
+  @Autowired
+  private TestService testService;
 
   @BeforeAll
   static void setup() throws IOException {
@@ -95,11 +102,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
                     <first-name></first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                    <last-name>Szukalski</last-name>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                     <summary-marks available="20" obtained="13"/>
                 </mcq-test-result>
             </mcq-test-results>
@@ -123,11 +130,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
                     <last-name></last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                     <summary-marks available="20" obtained="13"/>
                 </mcq-test-result>
             </mcq-test-results>
@@ -151,11 +158,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
                     <student-number></student-number>
-                    <test-id>9863</test-id>
+                    <test-id>2024001</test-id>
                     <summary-marks available="20" obtained="13"/>
                 </mcq-test-result>
             </mcq-test-results>
@@ -179,10 +186,10 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
+                    <student-number>2024001</student-number>
                     <test-id></test-id>
                     <summary-marks available="20" obtained="13"/>
                 </mcq-test-result>
@@ -207,11 +214,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                 </mcq-test-result>
             </mcq-test-results>
         """;
@@ -234,11 +241,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                     <summary-marks obtained="13"/>
                 </mcq-test-result>
             </mcq-test-results>
@@ -262,11 +269,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                     <summary-marks available="20"/>
                 </mcq-test-result>
             </mcq-test-results>
@@ -290,11 +297,11 @@ public class TestResultsControllerTest {
     // Given
     String invalidPayload = """
             <mcq-test-results>
-                <mcq-test-result scanned-on="2017-12-04T12:12:10+11:00">
-                    <first-name>KJ</first-name>
-                    <last-name>Alysander</last-name>
-                    <student-number>002299</student-number>
-                    <test-id>9863</test-id>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>Szymon</first-name>
+                    <last-name>Szukalski</last-name>
+                    <student-number>001122</student-number>
+                    <test-id>2024001</test-id>
                     <summary-marks available="20" obtained="1
                 </mcq-test-result>
             </mcq-test-results>
@@ -312,4 +319,171 @@ public class TestResultsControllerTest {
     assertThat(response.getBody()).isNotNull();
     assertThat(response.getBody().getMessage()).isEqualTo("Invalid XML payload");
   }
+
+  @Test
+  void testInitialSubmitReportsCreatedEntities() throws Exception {
+    // Given
+    String validPayload = """
+            <mcq-test-results>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>002233</student-number>
+                    <test-id>202402</test-id>
+                    <summary-marks available="20" obtained="13"/>
+                </mcq-test-result>
+            </mcq-test-results>
+        """;
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(XmlMarkrMessageConverter.MEDIA_TYPE);
+    HttpEntity<String> entity = new HttpEntity<>(validPayload, headers);
+
+    // When
+    ResponseEntity<ImportResponseDTO> response = restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getStatus()).isEqualTo("success");
+    assertThat(response.getBody().getMessage()).isEqualTo("Import completed successfully");
+    assertThat(response.getBody().getData().getStudentsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getStudentsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestResultsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestResultsUpdated()).isEqualTo(0);
+  }
+
+
+  @Test
+  void testSubsequentSubmitReportsNoCreatedOrUpdatedEntities() throws Exception {
+    // Given
+    String validPayload = """
+            <mcq-test-results>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>003344</student-number>
+                    <test-id>202403</test-id>
+                    <summary-marks available="20" obtained="13"/>
+                </mcq-test-result>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>003344</student-number>
+                    <test-id>202403</test-id>
+                    <summary-marks available="20" obtained="13"/>
+                </mcq-test-result>
+            </mcq-test-results>
+        """;
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(XmlMarkrMessageConverter.MEDIA_TYPE);
+    HttpEntity<String> entity = new HttpEntity<>(validPayload, headers);
+
+    // When
+    ResponseEntity<ImportResponseDTO> response = restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getStatus()).isEqualTo("success");
+    assertThat(response.getBody().getMessage()).isEqualTo("Import completed successfully");
+    assertThat(response.getBody().getData().getStudentsCreated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getStudentsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestsCreated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestResultsCreated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestResultsUpdated()).isEqualTo(0);
+  }
+
+
+  @Test
+  void testMarksAvailableAndObtainedAreUpdated() throws Exception {
+    // Given
+    String payload = """
+            <mcq-test-results>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>004455</student-number>
+                    <test-id>202404</test-id>
+                    <summary-marks available="20" obtained="13"/>
+                </mcq-test-result>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>004455</student-number>
+                    <test-id>202404</test-id>
+                    <summary-marks available="24" obtained="15"/>
+                </mcq-test-result>
+            </mcq-test-results>
+        """;
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(XmlMarkrMessageConverter.MEDIA_TYPE);
+    HttpEntity<String> entity = new HttpEntity<>(payload, headers);
+
+    // When
+    ResponseEntity<ImportResponseDTO> response = restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getStatus()).isEqualTo("success");
+    assertThat(response.getBody().getMessage()).isEqualTo("Import completed successfully");
+
+    assertThat(response.getBody().getData().getStudentsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getStudentsUpdated()).isEqualTo(0);
+
+    assertThat(response.getBody().getData().getTestsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestsUpdated()).isEqualTo(1);
+
+    assertThat(response.getBody().getData().getTestResultsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestResultsUpdated()).isEqualTo(1);
+  }
+
+  @Test
+  void testMarksAvailableAndObtainedAreNotUpdatedWhenFirstSubmissionIsHigher() throws Exception {
+    // Given
+    String payload = """
+            <mcq-test-results>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>005566</student-number>
+                    <test-id>202405</test-id>
+                    <summary-marks available="24" obtained="15"/>
+                </mcq-test-result>
+                <mcq-test-result scanned-on="2024-07-22T12:12:10+11:00">
+                    <first-name>John</first-name>
+                    <last-name>Doe</last-name>
+                    <student-number>005566</student-number>
+                    <test-id>202405</test-id>
+                    <summary-marks available="20" obtained="13"/>
+                </mcq-test-result>
+            </mcq-test-results>
+        """;
+
+    HttpHeaders headers = new HttpHeaders();
+    headers.setContentType(XmlMarkrMessageConverter.MEDIA_TYPE);
+    HttpEntity<String> entity = new HttpEntity<>(payload, headers);
+
+    // When
+    ResponseEntity<ImportResponseDTO> response = restTemplate.postForEntity(IMPORT_ENDPOINT, entity, ImportResponseDTO.class);
+
+    // Then
+    assertThat(response.getStatusCode()).isEqualTo(HttpStatus.OK);
+    assertThat(response.getBody()).isNotNull();
+    assertThat(response.getBody().getStatus()).isEqualTo("success");
+    assertThat(response.getBody().getMessage()).isEqualTo("Import completed successfully");
+    assertThat(response.getBody().getData().getStudentsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getStudentsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestsUpdated()).isEqualTo(0);
+    assertThat(response.getBody().getData().getTestResultsCreated()).isEqualTo(1);
+    assertThat(response.getBody().getData().getTestResultsUpdated()).isEqualTo(0);
+  }
+
 }

@@ -16,7 +16,6 @@ public class AggregateResponseDTO {
   private double p75 = 0.0;
   private int count = 0;
 
-  // Getters and Setters
   public double getMean() {
     return mean;
   }

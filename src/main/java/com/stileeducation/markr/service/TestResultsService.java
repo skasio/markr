@@ -8,7 +8,10 @@ import com.stileeducation.markr.entity.Student;
 import com.stileeducation.markr.entity.Test;
 import com.stileeducation.markr.entity.TestResult;
 import com.stileeducation.markr.exception.TestNotFoundException;
+import com.stileeducation.markr.repository.StudentRepository;
+import com.stileeducation.markr.repository.TestRepository;
 import com.stileeducation.markr.repository.TestResultRepository;
+import jakarta.transaction.Transactional;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
 import org.springframework.stereotype.Service;
@@ -29,7 +32,11 @@ public class TestResultsService {
 
   private final TestService testService;
 
-  public TestResultsService(TestResultRepository testResultRepository, StudentService studentService, TestService testService) {
+  public TestResultsService(TestResultRepository testResultRepository,
+                            StudentRepository studentRepository,
+                            TestRepository testRepository,
+                            StudentService studentService,
+                            TestService testService) {
     this.testResultRepository = testResultRepository;
     this.studentService = studentService;
     this.testService = testService;
@@ -37,7 +44,7 @@ public class TestResultsService {
 
   private static double[] calculatePercentages(List<TestResult> results, double totalMarksAvailable) {
     return results.stream()
-        .mapToDouble(result -> (double) result.getMarksAwarded() / totalMarksAvailable * 100)
+        .mapToDouble(result -> (double) result.getMarksObtained() / totalMarksAvailable * 100)
         .toArray();
   }
 
@@ -55,6 +62,7 @@ public class TestResultsService {
     return aggregateResponseDTO;
   }
 
+  @Transactional
   public ImportResponseDTO processTestResults(MCQTestResultsDTO testResults) {
     ImportResponseDTO.ImportData importData = new ImportResponseDTO.ImportData();
     boolean isValid = true;
@@ -70,23 +78,29 @@ public class TestResultsService {
     return createImportResponse(importData, isValid);
   }
 
-  public TestResult findOrCreateTestResult(Student student, Test test, Integer marksAwarded) {
+  @Transactional
+  public TestResult findOrCreateTestResult(Student student, Test test, Integer marksObtained) {
     Optional<TestResult> optionalTestResult = testResultRepository.findByStudentAndTest(student, test);
+
     if (optionalTestResult.isPresent()) {
       TestResult testResult = optionalTestResult.get();
-      if (marksAwarded > testResult.getMarksAwarded()) {
-        testResult.setMarksAwarded(marksAwarded);
+
+      // Update marks if new marks are higher
+      if (marksObtained > testResult.getMarksObtained()) {
+        testResult.setMarksObtained(marksObtained);
+        testResult.setCreated(false);
         testResult.setUpdated(true);
-        testResultRepository.save(testResult);
+        return testResultRepository.save(testResult);
       } else {
+        testResult.setCreated(false);
         testResult.setUpdated(false);
+        return testResult;
       }
-      return testResult;
     } else {
       TestResult testResult = new TestResult();
       testResult.setStudent(student);
       testResult.setTest(test);
-      testResult.setMarksAwarded(marksAwarded);
+      testResult.setMarksObtained(marksObtained);
       testResult.setCreated(true);
       return testResultRepository.save(testResult);
     }
@@ -186,7 +200,8 @@ public class TestResultsService {
     dto.setCount(results.size());
   }
 
-  private void processTestResult(MCQTestResultDTO mcqTestResult, ImportResponseDTO.ImportData importData) {
+  @Transactional
+  protected void processTestResult(MCQTestResultDTO mcqTestResult, ImportResponseDTO.ImportData importData) {
     Student student =
         studentService
             .findOrCreateStudent(
@@ -228,10 +243,10 @@ public class TestResultsService {
 
     if (isValid) {
       response.setStatus("success");
-      response.setMessage("Import operation completed successfully.");
+      response.setMessage("Import completed successfully");
     } else {
       response.setStatus("failure");
-      response.setMessage("Data was invalid or processing failed.");
+      response.setMessage("Data was invalid or processing failed");
     }
 
     return response;
