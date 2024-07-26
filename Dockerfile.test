@@ -5,11 +5,11 @@ COPY mvnw pom.xml ./
 COPY .mvn .mvn
 COPY src src
 RUN chmod +x mvnw
-RUN ./mvnw clean package -q -Dmaven.test.skip=true
+RUN ./mvnw clean package -Dmaven.test.skip=true
 
 # Stage 2: TEST
 FROM maven:3.8.5-openjdk-17 AS test
 WORKDIR /app
 COPY --from=build /app /app
 RUN chmod +x mvnw
-CMD ["./mvnw", "test", "-P", "test", "-q"]
+CMD ["./mvnw", "test", "-P", "test"]
