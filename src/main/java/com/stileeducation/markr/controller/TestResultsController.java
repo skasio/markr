@@ -3,6 +3,7 @@ package com.stileeducation.markr.controller;
 import com.stileeducation.markr.dto.AggregateResponseDTO;
 import com.stileeducation.markr.dto.ImportResponseDTO;
 import com.stileeducation.markr.dto.MCQTestResultsDTO;
+import com.stileeducation.markr.exception.TestNotFoundException;
 import com.stileeducation.markr.service.TestResultsService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,11 +35,13 @@ public class TestResultsController {
   }
 
   @GetMapping(value = AGGREGATE_ENDPOINT, produces = "application/json")
-  public AggregateResponseDTO getAggregatedResults(@PathVariable("test-id") String testId) {
-
-    // Should return 404 if test is not found.
-
-    return testResultsService.aggregateTestResults(testId);
+  public ResponseEntity<AggregateResponseDTO> getAggregatedResults(@PathVariable("test-id") String testId) {
+    try {
+      AggregateResponseDTO response = testResultsService.aggregateTestResults(testId);
+      return ResponseEntity.ok(response);
+    } catch (TestNotFoundException e) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    }
   }
 
   @ExceptionHandler(MethodArgumentNotValidException.class)

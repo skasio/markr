@@ -7,6 +7,7 @@ import com.stileeducation.markr.dto.MCQTestResultsDTO;
 import com.stileeducation.markr.entity.Student;
 import com.stileeducation.markr.entity.Test;
 import com.stileeducation.markr.entity.TestResult;
+import com.stileeducation.markr.exception.TestNotFoundException;
 import com.stileeducation.markr.repository.TestResultRepository;
 import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.apache.commons.math3.stat.descriptive.rank.Percentile;
@@ -43,12 +44,13 @@ public class TestResultsService {
   public AggregateResponseDTO aggregateTestResults(String testId) {
     AggregateResponseDTO aggregateResponseDTO = new AggregateResponseDTO();
 
-    testService.findTest(testId).ifPresent(test -> {
-      List<TestResult> testResults = findAllByTestId(testId);
-      if (!testResults.isEmpty()) {
-        populateAggregateResponse(aggregateResponseDTO, test, testResults);
-      }
-    });
+    Test test = testService.findTest(testId)
+        .orElseThrow(() -> new TestNotFoundException("Test with ID " + testId + " not found"));
+
+    List<TestResult> testResults = findAllByTestId(testId);
+    if (!testResults.isEmpty()) {
+      populateAggregateResponse(aggregateResponseDTO, test, testResults);
+    }
 
     return aggregateResponseDTO;
   }

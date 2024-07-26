@@ -47,6 +47,7 @@ public class TestResultsControllerTest {
     return stringWriter.toString();
   }
 
+
   @Test
   void testSupportedMediaType() throws Exception {
     // Given

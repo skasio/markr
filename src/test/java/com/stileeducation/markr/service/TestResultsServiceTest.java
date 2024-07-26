@@ -151,7 +151,7 @@ class TestResultsServiceTest {
   @Test
   void calculateStandardDeviationOfTestResults() {
     double standardDeviationOfTestResults = testResultsService.calculateStandardDeviationOfTestResults(test1, test1Results);
-    assertEquals(25, standardDeviationOfTestResults, 0.01);
+    assertEquals(25.0, standardDeviationOfTestResults, 0.01);
   }
 
   @Test
@@ -163,7 +163,7 @@ class TestResultsServiceTest {
   @Test
   void calculate50thPercentile() {
     double percentile = testResultsService.calculate50thPercentile(test1, test1Results);
-    assertEquals(45, percentile, 0.01);
+    assertEquals(45.0, percentile, 0.01);
   }
 
   @Test
