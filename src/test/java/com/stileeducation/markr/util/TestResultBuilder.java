@@ -8,7 +8,7 @@ public class TestResultBuilder {
   private Long id;
   private Student student;
   private Test test;
-  private Integer marksAwarded;
+  private Integer marksObtained;
 
   public TestResultBuilder withId(Long id) {
     this.id = id;
@@ -25,12 +25,12 @@ public class TestResultBuilder {
     return this;
   }
 
-  public TestResultBuilder withMarksAwarded(Integer marksAwarded) {
-    this.marksAwarded = marksAwarded;
+  public TestResultBuilder withMarksObtained(Integer marksObtained) {
+    this.marksObtained = marksObtained;
     return this;
   }
 
   public TestResult build() {
-    return new TestResult(id, student, test, marksAwarded);
+    return new TestResult(id, student, test, marksObtained);
   }
 }
