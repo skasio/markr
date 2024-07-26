@@ -2,6 +2,7 @@ package com.stileeducation.markr.service;
 
 import com.stileeducation.markr.entity.Student;
 import com.stileeducation.markr.repository.StudentRepository;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -15,10 +16,15 @@ public class StudentService {
     this.studentRepository = studentRepository;
   }
 
+  @Transactional
   public Student findOrCreateStudent(String firstName, String lastName, String studentNumber) {
     Optional<Student> optionalStudent = studentRepository.findByStudentNumber(studentNumber);
     if (optionalStudent.isPresent()) {
-      return optionalStudent.get();
+      Student student = optionalStudent.get();
+      // Reset transients
+      student.setCreated(false);
+      student.setUpdated(false);
+      return student;
     } else {
       Student student = new Student();
       student.setFirstName(firstName);

@@ -89,37 +89,37 @@ class TestResultsServiceTest {
     testResult1 = new TestResultBuilder()
         .withStudent(student1)
         .withTest(test1)
-        .withMarksAwarded(10)
+        .withMarksObtained(10)
         .build();
 
     testResult2 = new TestResultBuilder()
         .withStudent(student2)
         .withTest(test1)
-        .withMarksAwarded(20)
+        .withMarksObtained(20)
         .build();
 
     testResult3 = new TestResultBuilder()
         .withStudent(student3)
         .withTest(test1)
-        .withMarksAwarded(40)
+        .withMarksObtained(40)
         .build();
 
     testResult4 = new TestResultBuilder()
         .withStudent(student4)
         .withTest(test1)
-        .withMarksAwarded(50)
+        .withMarksObtained(50)
         .build();
 
     testResult5 = new TestResultBuilder()
         .withStudent(student3)
         .withTest(test1)
-        .withMarksAwarded(70)
+        .withMarksObtained(70)
         .build();
 
     testResult6 = new TestResultBuilder()
         .withStudent(student4)
         .withTest(test1)
-        .withMarksAwarded(80)
+        .withMarksObtained(80)
         .build();
 
     test1Results = List.of(testResult1, testResult2, testResult3, testResult4, testResult5, testResult6);
