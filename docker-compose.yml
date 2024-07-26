@@ -39,7 +39,7 @@ services:
       SPRING_JPA_HIBERNATE_DDL_AUTO: update
       SPRING_JPA_SHOW_SQL: false
       SPRING_PROFILES_ACTIVE: test
-    command: ./mvnw test -P test -q
+    command: ./mvnw test -P test
 
 volumes:
   postgres_data:
